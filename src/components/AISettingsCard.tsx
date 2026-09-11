@@ -121,6 +121,7 @@ export function AISettingsCard() {
               <Icon name={showKey ? 'eye-off' : 'eye'} size={21} />
             </button>
           </div>
+          {provider === 'nvidia' && <p className="muted">Use the full NVIDIA secret key beginning with <code>nvapi-</code>. Do not paste the key name or ID.</p>}
         </>}
       </div>
 

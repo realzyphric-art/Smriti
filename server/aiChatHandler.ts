@@ -101,7 +101,20 @@ export async function handleAIChat(body: unknown, options: AIHandlerOptions = {}
     });
 
     if (!upstream.ok) {
-      if (upstream.status === 401 || upstream.status === 403) return response(401, { error: 'The API key was rejected. Check it in Settings.' });
+      if (upstream.status === 401) {
+        return response(401, {
+          error: provider === 'nvidia'
+            ? 'NVIDIA rejected this key. Paste the full secret key beginning with nvapi-, not the key name or ID.'
+            : 'The API key was rejected. Check it in Settings.',
+        });
+      }
+      if (upstream.status === 403) {
+        return response(403, {
+          error: provider === 'nvidia'
+            ? 'NVIDIA denied this model for this key. Check the model ID and its access in NVIDIA Build.'
+            : 'The provider denied access. Check the key and model in Settings.',
+        });
+      }
       if (upstream.status === 404) return response(400, { error: 'That model was not found. Check the model name in Settings.' });
       return response(502, { error: 'The AI service could not answer right now. Please try again.' });
     }
