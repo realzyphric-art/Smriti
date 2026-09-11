@@ -18,6 +18,7 @@ No source-code edit or environment variable is needed for a personal key.
 - OpenAI: default model `gpt-4o-mini`.
 - Qwen / DashScope: default model `qwen-plus`.
 - OpenRouter: default model `openai/gpt-4o-mini`. OpenRouter model IDs use the `provider/model` format; you can replace this with any model available in your OpenRouter account.
+- NVIDIA NIM: default model `meta/llama-3.2-3b-instruct`. NVIDIA uses the OpenAI-compatible endpoint at `https://integrate.api.nvidia.com/v1/chat/completions`.
 - Ollama (laptop): default model `qwen2.5:3b`. Ollama runs on the computer hosting the local Vite server, so no API key is needed. The phone must open the local Vite URL over the same Wi-Fi network; the public Vercel deployment cannot reach a laptop's `localhost`.
 
 The model field is editable, so a provider model can be changed later without changing code.

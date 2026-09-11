@@ -11,6 +11,7 @@ const DEFAULT_MODELS: Record<AIProvider, string> = {
   openai: 'gpt-4o-mini',
   qwen: 'qwen-plus',
   openrouter: 'openai/gpt-4o-mini',
+  nvidia: 'meta/llama-3.2-3b-instruct',
   ollama: 'qwen2.5:3b',
 };
 
@@ -130,6 +131,7 @@ export function AISettingsCard() {
             <option value="openai">OpenAI</option>
             <option value="qwen">Qwen / DashScope</option>
             <option value="openrouter">OpenRouter</option>
+            <option value="nvidia">NVIDIA NIM</option>
             <option value="ollama">Ollama (laptop)</option>
           </select>
         </div>

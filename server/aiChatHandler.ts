@@ -1,5 +1,5 @@
 type ChatRole = 'user' | 'assistant';
-type Provider = 'openai' | 'qwen' | 'openrouter' | 'ollama';
+type Provider = 'openai' | 'qwen' | 'openrouter' | 'nvidia' | 'ollama';
 
 const SMRITI_SYSTEM_PROMPT = [
   'You are Smriti, a calm and supportive companion for people who may have memory difficulties.',
@@ -33,11 +33,12 @@ const PROVIDER_URLS: Record<Provider, string> = {
   openai: 'https://api.openai.com/v1/chat/completions',
   qwen: 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions',
   openrouter: 'https://openrouter.ai/api/v1/chat/completions',
+  nvidia: 'https://integrate.api.nvidia.com/v1/chat/completions',
   ollama: 'http://127.0.0.1:11434/v1/chat/completions',
 };
 
 function isProvider(value: unknown): value is Provider {
-  return value === 'openai' || value === 'qwen' || value === 'openrouter' || value === 'ollama';
+  return value === 'openai' || value === 'qwen' || value === 'openrouter' || value === 'nvidia' || value === 'ollama';
 }
 
 function cleanMessages(value: unknown): IncomingMessage[] | null {
@@ -64,7 +65,10 @@ export async function handleAIChat(body: unknown, options: AIHandlerOptions = {}
   const provider = isProvider(input.provider) ? input.provider : 'openai';
   const model = typeof input.model === 'string' && input.model.trim().length > 0
     ? input.model.trim().slice(0, 120)
-    : provider === 'qwen' ? 'qwen-plus' : provider === 'openrouter' ? 'openai/gpt-4o-mini' : 'gpt-4o-mini';
+    : provider === 'qwen' ? 'qwen-plus'
+      : provider === 'openrouter' ? 'openai/gpt-4o-mini'
+        : provider === 'nvidia' ? 'meta/llama-3.2-3b-instruct'
+          : 'gpt-4o-mini';
   const testOnly = input.testOnly === true;
   const conversationMessages = testOnly ? [{ role: 'user' as const, content: 'Reply with exactly OK.' }] : cleanMessages(input.messages);
 
