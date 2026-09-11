@@ -65,8 +65,8 @@ export function AppHeader({ subtitle, readText, showBack, onBack }: AppHeaderPro
               <Icon name="arrow-left" size={24} />
             </button>
           ) : (
-            <span className="brand__logo" aria-hidden="true">
-              <Icon name="leaf" size={22} />
+            <span className="brand__logo brand__logo--image" aria-hidden="true">
+              <img src="/smriti-logo-mark.png" alt="" width="44" height="44" />
             </span>
           )}
           <div>
