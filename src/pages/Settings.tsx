@@ -15,6 +15,7 @@ import { Icon } from '@/components/Icon';
 import { authErrorMessage } from '@/services/authService';
 import { ConfirmSheet } from '@/components/ConfirmSheet';
 import { AISettingsCard } from '@/components/AISettingsCard';
+import { InstallAppCard } from '@/components/InstallAppCard';
 import { AI_CHAT_ENABLED } from '@/config/features';
 import type { LanguageCode, ThemePreference } from '@/types';
 import { approveCaregiverInvite, getPatientShareCode, listPatientCaregiverLinks, revokeCaregiverAccess, setPatientSharing } from '@/services/sharingService';
@@ -205,6 +206,8 @@ export function Settings() {
             <h1 className="page-title">{t('settings.title')}</h1>
             <p className="page-sub">{t('settings.subtitle')}</p>
           </div>
+
+          <InstallAppCard />
 
           {/* Spoken help */}
           <Card variant="tint" padLg>
