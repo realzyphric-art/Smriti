@@ -18,8 +18,18 @@ No source-code edit or environment variable is needed for a personal key.
 - OpenAI: default model `gpt-4o-mini`.
 - Qwen / DashScope: default model `qwen-plus`.
 - OpenRouter: default model `openai/gpt-4o-mini`. OpenRouter model IDs use the `provider/model` format; you can replace this with any model available in your OpenRouter account.
+- Ollama (laptop): default model `qwen2.5:3b`. Ollama runs on the computer hosting the local Vite server, so no API key is needed. The phone must open the local Vite URL over the same Wi-Fi network; the public Vercel deployment cannot reach a laptop's `localhost`.
 
 The model field is editable, so a provider model can be changed later without changing code.
+
+### Ollama on a laptop
+
+1. Install Ollama on the laptop and run `ollama pull qwen2.5:3b`.
+2. Start Smriti locally with `npm run dev`.
+3. Open the laptop's local URL from the phone while both devices are on the same Wi-Fi.
+4. In Smriti Settings → AI Configuration, choose **Ollama (laptop)**, keep `qwen2.5:3b`, and select **Use Ollama**.
+
+Ollama uses the laptop's available GPU automatically. If no GPU is available, it can fall back to the CPU, but responses will be slower. Do not expose port 11434 directly to the public internet; use the local Vite proxy or a protected VPN/reverse proxy.
 
 ## Security boundary
 

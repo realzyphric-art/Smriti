@@ -93,8 +93,8 @@ export function Chat() {
   const sendMessage = async () => {
     const content = input.trim();
     if (!content || busy || !active) return;
-    if (!aiSettings?.apiKey) {
-      setError('Add your API key in Settings before starting a chat.');
+    if (!aiSettings || (aiSettings.provider !== 'ollama' && !aiSettings.apiKey)) {
+      setError('Choose Ollama in Settings or add a provider API key before starting a chat.');
       return;
     }
     const userMessage: ChatMessage = { id: crypto.randomUUID(), role: 'user', content, createdAt: Date.now() };
@@ -105,7 +105,7 @@ export function Chat() {
     setBusy(true);
     setError('');
     try {
-      const result = await requestAIChat({ apiKey: aiSettings.apiKey, provider: aiSettings.provider, model: aiSettings.model, messages: nextMessages });
+      const result = await requestAIChat({ apiKey: aiSettings.provider === 'ollama' ? '' : aiSettings.apiKey, provider: aiSettings.provider, model: aiSettings.model, messages: nextMessages });
       if (!result.content) throw new Error('The AI returned an empty response.');
       saveConversation({ ...nextConversation, updatedAt: Date.now(), messages: [...nextMessages, { id: crypto.randomUUID(), role: 'assistant', content: result.content, createdAt: Date.now() }] });
     } catch (reason) {
@@ -138,7 +138,7 @@ export function Chat() {
               </div>
             ))}
           </div>
-          {!aiSettings?.apiKey && <div className="chat-sidebar__notice"><strong>AI setup needed</strong><span>Add your key in Settings to begin.</span><button type="button" onClick={() => navigate('/settings')}>Open Settings</button></div>}
+          {(!aiSettings || (aiSettings.provider !== 'ollama' && !aiSettings.apiKey)) && <div className="chat-sidebar__notice"><strong>AI setup needed</strong><span>Choose Ollama or add a provider key in Settings.</span><button type="button" onClick={() => navigate('/settings')}>Open Settings</button></div>}
         </aside>
 
         <section className="chat-panel" aria-label="Chat conversation">
@@ -153,7 +153,7 @@ export function Chat() {
             {busy && <div className="chat-message chat-message--assistant"><div className="chat-message__avatar" aria-hidden="true">✦</div><div className="chat-message__body"><div className="chat-message__meta"><strong>Smriti Assistant</strong><span>Thinking…</span></div><div className="chat-typing" aria-label="Assistant is typing"><i /><i /><i /></div></div></div>}
             <div ref={endRef} />
           </div>
-          {error && <div className="chat-error" role="alert"><span>{error}</span>{!aiSettings?.apiKey && <button type="button" onClick={() => navigate('/settings')}>Open Settings</button>}</div>}
+          {error && <div className="chat-error" role="alert"><span>{error}</span>{(!aiSettings || (aiSettings.provider !== 'ollama' && !aiSettings.apiKey)) && <button type="button" onClick={() => navigate('/settings')}>Open Settings</button>}</div>}
           <form className="chat-composer" onSubmit={(event) => { event.preventDefault(); void sendMessage(); }}>
             <textarea value={input} onChange={(event) => setInput(event.target.value)} onKeyDown={handleKeyDown} placeholder="Write a message…" rows={2} aria-label="Message" disabled={busy} />
             <button type="submit" className="chat-send" disabled={busy || !input.trim()} aria-label="Send message"><Icon name="arrow-right" size={22} /></button>

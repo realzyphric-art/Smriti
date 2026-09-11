@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react';
 import { fileURLToPath, URL } from 'node:url';
 import { handleAIChat } from './server/aiChatHandler';
 
-function localAIEndpoint(): Plugin {
+function localAIEndpoint(ollamaBaseUrl?: string): Plugin {
   return {
     name: 'smriti-local-ai-endpoint',
     configureServer(server) {
@@ -16,7 +16,7 @@ function localAIEndpoint(): Plugin {
         req.on('data', (chunk) => { raw += String(chunk); });
         req.on('end', async () => {
           try {
-            const result = await handleAIChat(JSON.parse(raw));
+            const result = await handleAIChat(JSON.parse(raw), { ollamaBaseUrl });
             res.statusCode = result.status;
             res.setHeader('Content-Type', 'application/json');
             res.end(JSON.stringify(result.body));
@@ -43,7 +43,7 @@ export default defineConfig(({ mode }) => {
   const supabaseAnonKey = env.VITE_SUPABASE_ANON_KEY || env.VITE_SUPABASE_PUBLISHABLE_KEY || env.NEXT_PUBLIC_SUPABASE_ANON_KEY || env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || env.SUPABASE_ANON_KEY || env.SUPABASE_PUBLISHABLE_KEY || '';
 
   return {
-    plugins: [react(), localAIEndpoint()],
+    plugins: [react(), localAIEndpoint(env.OLLAMA_BASE_URL)],
     define: {
       'import.meta.env.VITE_SUPABASE_URL': JSON.stringify(supabaseUrl),
       'import.meta.env.VITE_SUPABASE_ANON_KEY': JSON.stringify(supabaseAnonKey),

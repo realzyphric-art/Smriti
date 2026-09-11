@@ -11,6 +11,7 @@ const DEFAULT_MODELS: Record<AIProvider, string> = {
   openai: 'gpt-4o-mini',
   qwen: 'qwen-plus',
   openrouter: 'openai/gpt-4o-mini',
+  ollama: 'qwen2.5:3b',
 };
 
 export function AISettingsCard() {
@@ -36,22 +37,22 @@ export function AISettingsCard() {
   }, []);
 
   const activeKey = draftKey.trim() || savedKey;
-  const configured = Boolean(savedKey);
+  const configured = provider === 'ollama' || Boolean(savedKey);
 
   const saveKey = async () => {
     const key = draftKey.trim();
-    if (!key) {
+    if (provider !== 'ollama' && !key) {
       showToast('Paste an API key before saving.', '🔑');
       return;
     }
     setBusy(true);
     setError('');
     try {
-      await storageService.putAISettings({ id: 'default', provider, model: model.trim() || DEFAULT_MODELS[provider], apiKey: key, updatedAt: Date.now() });
+      await storageService.putAISettings({ id: 'default', provider, model: model.trim() || DEFAULT_MODELS[provider], apiKey: provider === 'ollama' ? '' : key, updatedAt: Date.now() });
       setSavedKey(key);
       setDraftKey('');
       setStatus('saved');
-      showToast('API key saved on this device.', '✓');
+      showToast(provider === 'ollama' ? 'Ollama selected on this device.' : 'API key saved on this device.', '✓');
     } catch {
       setStatus('error');
       setError('The key could not be saved on this device.');
@@ -61,16 +62,16 @@ export function AISettingsCard() {
   };
 
   const testKey = async () => {
-    if (!activeKey) {
+    if (provider !== 'ollama' && !activeKey) {
       showToast('Paste an API key before testing.', '🔑');
       return;
     }
     setBusy(true);
     setError('');
     try {
-      await requestAIChat({ apiKey: activeKey, provider, model: model.trim() || DEFAULT_MODELS[provider], messages: [], testOnly: true });
+      await requestAIChat({ apiKey: provider === 'ollama' ? '' : activeKey, provider, model: model.trim() || DEFAULT_MODELS[provider], messages: [], testOnly: true });
       setStatus('tested');
-      showToast('API key works.', '✓');
+      showToast(provider === 'ollama' ? 'Ollama connection works.' : 'API key works.', '✓');
     } catch (reason) {
       setStatus('error');
       setError(reason instanceof Error ? reason.message : 'The API key could not be tested.');
@@ -96,28 +97,30 @@ export function AISettingsCard() {
       </div>
 
       <div className="ai-key-instructions">
-        Paste your API key below. Your key is used to connect this chatbot to the AI service.
+        Choose Ollama to run Qwen on your laptop, or choose a cloud provider and add its API key.
       </div>
 
       <p className="muted ai-settings-note">Smriti’s calm, gentle speaking style is always active in Chat. It uses short, clear language and one question at a time.</p>
 
       <div className="field">
-        <label className="field__label" htmlFor="ai-api-key">API Key</label>
-        <div className="ai-key-input">
-          <input
-            id="ai-api-key"
-            className="input"
-            type={showKey ? 'text' : 'password'}
-            value={draftKey}
-            onChange={(event) => { setDraftKey(event.target.value); setStatus('idle'); setError(''); }}
-            placeholder={configured ? 'Saved key — paste a new key to replace it' : 'Paste your API key'}
-            autoComplete="off"
-            spellCheck={false}
-          />
-          <button type="button" className="ai-key-toggle" onClick={() => setShowKey((value) => !value)} aria-label={showKey ? 'Hide API key' : 'Show API key'}>
-            <Icon name={showKey ? 'eye-off' : 'eye'} size={21} />
-          </button>
-        </div>
+        {provider === 'ollama' ? <p className="muted">Ollama runs on your laptop. No API key is needed; the phone connects to the laptop over Wi‑Fi.</p> : <>
+          <label className="field__label" htmlFor="ai-api-key">API Key</label>
+          <div className="ai-key-input">
+            <input
+              id="ai-api-key"
+              className="input"
+              type={showKey ? 'text' : 'password'}
+              value={draftKey}
+              onChange={(event) => { setDraftKey(event.target.value); setStatus('idle'); setError(''); }}
+              placeholder={configured ? 'Saved key — paste a new key to replace it' : 'Paste your API key'}
+              autoComplete="off"
+              spellCheck={false}
+            />
+            <button type="button" className="ai-key-toggle" onClick={() => setShowKey((value) => !value)} aria-label={showKey ? 'Hide API key' : 'Show API key'}>
+              <Icon name={showKey ? 'eye-off' : 'eye'} size={21} />
+            </button>
+          </div>
+        </>}
       </div>
 
       <div className="ai-settings-grid">
@@ -127,6 +130,7 @@ export function AISettingsCard() {
             <option value="openai">OpenAI</option>
             <option value="qwen">Qwen / DashScope</option>
             <option value="openrouter">OpenRouter</option>
+            <option value="ollama">Ollama (laptop)</option>
           </select>
         </div>
         <div className="field">
@@ -137,12 +141,12 @@ export function AISettingsCard() {
 
       <div className={`ai-key-status ${configured ? 'is-configured' : ''}`} role="status">
         <span className="ai-key-status__dot" />
-        {configured ? 'API key configured on this device' : 'No API key configured'}
+        {provider === 'ollama' ? 'Ollama selected on this device' : configured ? 'API key configured on this device' : 'No API key configured'}
       </div>
 
       <div className="row ai-settings-actions">
-        <Button variant="primary" onClick={() => void saveKey()} disabled={busy || !draftKey.trim()}>{busy ? 'Working…' : configured ? 'Replace API Key' : 'Save API Key'}</Button>
-        <Button variant="secondary" onClick={() => void testKey()} disabled={busy || !activeKey}>Test API Key</Button>
+        <Button variant="primary" onClick={() => void saveKey()} disabled={busy || (provider !== 'ollama' && !draftKey.trim())}>{busy ? 'Working…' : provider === 'ollama' ? 'Use Ollama' : configured ? 'Replace API Key' : 'Save API Key'}</Button>
+        <Button variant="secondary" onClick={() => void testKey()} disabled={busy || (provider !== 'ollama' && !activeKey)}>Test Connection</Button>
       </div>
       {error && <p className="ai-settings-error" role="alert">{error}</p>}
       <p className="muted ai-settings-note">Your key is stored in this browser’s private app storage and is never added to chat history, URLs, or logs.</p>
