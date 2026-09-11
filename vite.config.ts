@@ -31,6 +31,22 @@ function localAIEndpoint(ollamaBaseUrl?: string): Plugin {
   };
 }
 
+function offlinePrecacheManifest(): Plugin {
+  return {
+    name: 'smriti-offline-precache-manifest',
+    generateBundle(_options, bundle) {
+      const files = Object.keys(bundle)
+        .filter((fileName) => fileName.startsWith('assets/') && /\.(?:js|css)$/.test(fileName))
+        .map((fileName) => `/${fileName}`);
+      this.emitFile({
+        type: 'asset',
+        fileName: 'precache-manifest.json',
+        source: JSON.stringify(files),
+      });
+    },
+  };
+}
+
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   // Read the two public Vite variables explicitly. Do not alias other
@@ -43,7 +59,7 @@ export default defineConfig(({ mode }) => {
   const supabaseAnonKey = env.VITE_SUPABASE_ANON_KEY || env.VITE_SUPABASE_PUBLISHABLE_KEY || env.NEXT_PUBLIC_SUPABASE_ANON_KEY || env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || env.SUPABASE_ANON_KEY || env.SUPABASE_PUBLISHABLE_KEY || '';
 
   return {
-    plugins: [react(), localAIEndpoint(env.OLLAMA_BASE_URL)],
+    plugins: [react(), offlinePrecacheManifest(), localAIEndpoint(env.OLLAMA_BASE_URL)],
     define: {
       'import.meta.env.VITE_SUPABASE_URL': JSON.stringify(supabaseUrl),
       'import.meta.env.VITE_SUPABASE_ANON_KEY': JSON.stringify(supabaseAnonKey),

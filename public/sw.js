@@ -2,12 +2,32 @@
    Static assets are cached on install and the latest app shell is refreshed
    whenever a page loads online, so installed copies remain usable offline. */
 
-const CACHE = 'memorycare-v4';
-const SHELL = ['/', '/index.html', '/manifest.webmanifest', '/icon-192.png', '/icon-512.png'];
+const CACHE = 'memorycare-v5';
+const SHELL = [
+  '/',
+  '/index.html',
+  '/manifest.webmanifest',
+  '/precache-manifest.json',
+  '/icon-192.png',
+  '/icon-512.png',
+  '/smriti-logo-mark.png',
+  '/stitch-memorycare-portrait.png',
+];
 
 async function cacheAppShell() {
   const cache = await caches.open(CACHE);
   await cache.addAll(SHELL);
+  try {
+    const manifestResponse = await fetch('/precache-manifest.json', { cache: 'no-store' });
+    const manifest = await manifestResponse.json();
+    if (Array.isArray(manifest)) {
+      await Promise.all(manifest
+        .filter((path) => typeof path === 'string' && path.startsWith('/assets/'))
+        .map((path) => cache.add(path).catch(() => undefined)));
+    }
+  } catch {
+    // The shell is still useful if a deployment has no generated manifest.
+  }
   const index = await cache.match('/index.html');
   if (!index) return;
   const html = await index.text();

@@ -106,7 +106,14 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
       return true;
     } catch (error) {
       void errorLogger.captureRequestError(error, { feature: 'auth', eventType: 'AUTH_CONTEXT_HYDRATION_FAILED', action: 'hydrate_auth' });
-      if (isLive() && syncId === authSyncId.current) setSettings((s) => ({ ...s, authenticated: false }));
+      // Supabase cannot validate a session without a network connection. Keep
+      // the last local session so the installed app can still open offline;
+      // the next online auth refresh will validate it again.
+      const cached = load();
+      const keepLocalSession = cached.authenticated === true || cached.guestMode === true;
+      if (isLive() && syncId === authSyncId.current && !keepLocalSession) {
+        setSettings((s) => ({ ...s, authenticated: false }));
+      }
       return false;
     } finally {
       if (isLive() && syncId === authSyncId.current) setAuthReady(true);
