@@ -1,37 +1,43 @@
 /* Smriti x Stitch / Figma visual system
    Warm, legible, low-noise surfaces for patients and caregivers. */
 :root {
-  --surface: #f3faff;
-  --surface-bright: #f3faff;
+  --surface: #f8f9f6;
+  --surface-bright: #f8f9f6;
   --surface-container-lowest: #ffffff;
-  --surface-container-low: #e6f6ff;
-  --surface-container: #e0f0f9;
-  --surface-container-high: #daebf4;
-  --surface-container-highest: #d5e5ee;
-  --surface-variant: #d5e5ee;
-  --on-surface: #0e1e24;
-  --on-surface-variant: #424940;
-  --on-surface-muted: #5c6b73;
-  --secondary: #7d562d;
-  --secondary-dark: #325734;
+  --surface-container-low: #e8f1e5;
+  --surface-container: #e3eef9;
+  --surface-container-high: #f5e6d3;
+  --surface-container-highest: #e3eef9;
+  --surface-variant: #e3eef9;
+  --on-surface: #1f2d3d;
+  --on-surface-variant: #4b5563;
+  --on-surface-muted: #4b5563;
+  --secondary: #f4a261;
+  --secondary-dark: #1f2d3d;
   --on-secondary: #ffffff;
-  --secondary-container: #ffca98;
-  --secondary-container-soft: #fff0df;
-  --on-secondary-container: #7a532a;
-  --primary: #325734;
-  --primary-container: #4a704a;
-  --primary-fixed: #c3eebe;
-  --primary-fixed-soft: #e8f5e6;
-  --on-primary-fixed: #002106;
-  --border-card: rgba(74, 112, 74, .18);
-  --border-strong: #727970;
-  --outline-variant: #c2c8be;
+  --secondary-container: #fff3b0;
+  --secondary-container-soft: #f5e6d3;
+  --on-secondary-container: #1f2d3d;
+  --primary: #4caf7f;
+  --primary-container: #4caf7f;
+  --accent-blue: #5b8def;
+  --accent-purple: #8e7cc3;
+  --accent-orange: #f4a261;
+  --state-yellow: #fff3b0;
+  --state-red: #f8b4b4;
+  --state-teal: #6ec6b8;
+  --primary-fixed: #e8f1e5;
+  --primary-fixed-soft: #e8f1e5;
+  --on-primary-fixed: #1f2d3d;
+  --border-card: rgba(31, 45, 61, .12);
+  --border-strong: #4b5563;
+  --outline-variant: #cbd5dc;
   --radius-md: 1rem;
   --radius-lg: 1.25rem;
   --radius-xl: 1.5rem;
   --shadow-sm: 0 4px 18px rgba(43, 58, 65, .06);
   --shadow-md: 0 8px 24px rgba(43, 58, 65, .08);
-  --font-head: 'Literata', Georgia, serif;
+  --font-head: 'Atkinson Hyperlegible Next', system-ui, sans-serif;
   --font-body: 'Atkinson Hyperlegible Next', system-ui, sans-serif;
   --fs-body: 1.125rem;
   --fs-body-lg: 1.25rem;
@@ -44,10 +50,10 @@ body, .app-shell { background: var(--surface); color: var(--on-surface); }
 body { font-family: var(--font-body); font-size: var(--fs-body); line-height: 1.55; }
 h1, h2, h3, h4, .brand__name, .page-title, .screen-intro h1 { font-family: var(--font-head); letter-spacing: -.015em; }
 h1 { font-weight: 600; }
-.app-header { background: rgba(243, 250, 255, .94); border-bottom: 1px solid rgba(194, 200, 190, .45); box-shadow: 0 2px 14px rgba(43, 58, 65, .04); }
+.app-header { background: rgba(248, 249, 246, .96); border-bottom: 1px solid rgba(31, 45, 61, .1); box-shadow: 0 2px 14px rgba(31, 45, 61, .04); }
 .app-header__inner { max-width: 780px; height: 4.75rem; padding-inline: 1.5rem; }
 .brand { gap: .7rem; }
-.brand__logo { width: 2.75rem; height: 2.75rem; background: var(--primary-fixed-soft); color: var(--primary); }
+.brand__logo { width: 2.75rem; height: 2.75rem; background: var(--surface-container-low); color: var(--primary); }
 .brand__name { font-size: 1.55rem; color: var(--primary); }
 .brand__sub { color: var(--on-surface-variant); font-size: .95rem; }
 .page { max-width: 780px; padding-top: calc(5.5rem + env(safe-area-inset-top, 0)); gap: 2rem; }
@@ -76,7 +82,7 @@ h1 { font-weight: 600; }
 .home-intro__eyebrow { color: var(--primary); letter-spacing: 0; text-transform: none; }
 .home-intro h1 { font-size: clamp(2rem, 7vw, 2.75rem); line-height: 1.15; }
 .home-intro p { color: var(--on-surface-variant); font-size: var(--fs-body-lg); max-width: 34rem; }
-.next-step { background: var(--surface-container-lowest); color: var(--on-surface); border: 1px solid rgba(212,163,115,.5); border-left: .45rem solid #d4a373; border-radius: var(--radius-xl); box-shadow: var(--shadow-md); }
+.next-step { background: var(--surface-container-lowest); color: var(--on-surface); border: 1px solid rgba(244,162,97,.5); border-left: .45rem solid #f4a261; border-radius: var(--radius-xl); box-shadow: var(--shadow-md); }
 .next-step__content { padding: 1.35rem 1.35rem 1.5rem; }
 .next-step__kicker { color: var(--on-secondary-container); }
 .next-step h2 { color: var(--on-surface); font-family: var(--font-head); }
@@ -84,7 +90,7 @@ h1 { font-weight: 600; }
 .next-step .btn { background: var(--primary); color: #fff; border-color: var(--primary); }
 .mobile-section__heading h2, .section-heading h2 { font-family: var(--font-head); color: var(--on-surface); }
 .mobile-row { padding: 1rem; border: 1px solid var(--border-card); }
-.mobile-row__icon, .home-reassurance__icon { background: var(--primary-fixed-soft); color: var(--primary); }
+.mobile-row__icon, .home-reassurance__icon { background: var(--surface-container-low); color: var(--primary); }
 .home-reassurance { background: var(--surface-container-low); border-color: transparent; border-radius: var(--radius-lg); }
 .activity-feature { background: var(--surface-container-low); border: 1px solid rgba(50,87,52,.1); border-radius: var(--radius-lg); }
 .activity-card { padding: 1.1rem; border: 1px solid var(--border-card); }
@@ -94,7 +100,7 @@ h1 { font-weight: 600; }
 .reminder-card { padding: 1rem; border: 1px solid var(--border-card); }
 .reminder-card.is-now { background: var(--secondary-container-soft); border-color: rgba(212,163,115,.5); }
 .person-row { padding: 1.1rem; border: 1px solid var(--border-card); }
-.person-row__avatar { background: var(--primary-fixed-soft); color: var(--primary); }
+.person-row__avatar { background: var(--surface-container-low); color: var(--primary); }
 .game-page h1 { font-family: var(--font-head); }
 .game-stat { background: var(--surface-container-lowest); border-color: var(--border-card); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); }
 .pair-card { background: var(--surface-container-low); border-color: rgba(50,87,52,.2); border-radius: var(--radius-xl); min-height: 8rem; }
