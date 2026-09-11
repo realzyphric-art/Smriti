@@ -1,6 +1,13 @@
 -- Make patient connection codes follow the selected patient profile and give
 -- the caregiver a useful result when a code does not match.
 
+alter table public.patients
+  add column if not exists caregiver_share_code text;
+
+create unique index if not exists patients_caregiver_share_code_idx
+  on public.patients (caregiver_share_code)
+  where caregiver_share_code is not null;
+
 create or replace function public.get_patient_share_code_for_patient(p_patient_id uuid)
 returns text
 language plpgsql
