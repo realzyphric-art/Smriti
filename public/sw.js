@@ -2,7 +2,7 @@
    Static assets are cached on install; navigation falls back to the
    cached shell so the app opens without a network connection. */
 
-const CACHE = 'memorycare-v1';
+const CACHE = 'memorycare-v2';
 const SHELL = ['/', '/index.html', '/manifest.webmanifest', '/icon-192.png', '/icon-512.png'];
 
 self.addEventListener('install', (event) => {
