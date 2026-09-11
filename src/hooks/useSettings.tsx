@@ -84,6 +84,13 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
 
   const hydrateAuth = async (isLive: () => boolean = () => true): Promise<boolean> => {
     if (!supabase) return false;
+    if (typeof navigator !== 'undefined' && !navigator.onLine) {
+      // A persisted local session is enough to open the installed app. Do not
+      // wait for a network request that cannot succeed while offline.
+      setAuthReady(true);
+      const cached = load();
+      return cached.authenticated === true || cached.guestMode === true;
+    }
     const syncId = ++authSyncId.current;
     setAuthReady(false);
     try {
@@ -126,7 +133,9 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     void inspectSupabase().catch(() => undefined);
     void hydrateAuth(() => live);
     const unsubscribe = onAuthStateChange(() => { void hydrateAuth(() => live); });
-    return () => { live = false; unsubscribe(); };
+    const onOnline = () => { void hydrateAuth(() => live); };
+    window.addEventListener('online', onOnline);
+    return () => { live = false; unsubscribe(); window.removeEventListener('online', onOnline); };
   }, []);
 
   // Persist on every change.
