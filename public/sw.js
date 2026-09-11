@@ -2,15 +2,24 @@
    Static assets are cached on install and the latest app shell is refreshed
    whenever a page loads online, so installed copies remain usable offline. */
 
-const CACHE = 'memorycare-v3';
+const CACHE = 'memorycare-v4';
 const SHELL = ['/', '/index.html', '/manifest.webmanifest', '/icon-192.png', '/icon-512.png'];
+
+async function cacheAppShell() {
+  const cache = await caches.open(CACHE);
+  await cache.addAll(SHELL);
+  const index = await cache.match('/index.html');
+  if (!index) return;
+  const html = await index.text();
+  const assets = [...html.matchAll(/(?:src|href)="([^"]+)"/g)]
+    .map((match) => match[1])
+    .filter((path) => path.startsWith('/') && !path.startsWith('/api/'));
+  await Promise.all(assets.map((path) => cache.add(path).catch(() => undefined)));
+}
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches
-      .open(CACHE)
-      .then((cache) => cache.addAll(SHELL))
-      .then(() => self.skipWaiting()),
+    cacheAppShell().then(() => self.skipWaiting()),
   );
 });
 
@@ -22,6 +31,14 @@ self.addEventListener('activate', (event) => {
         Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k))),
       )
       .then(() => self.clients.claim()),
+  );
+});
+
+self.addEventListener('message', (event) => {
+  if (event.data?.type !== 'CACHE_URLS' || !Array.isArray(event.data.urls)) return;
+  const urls = event.data.urls.filter((url) => typeof url === 'string' && url.startsWith(self.location.origin) && !new URL(url).pathname.startsWith('/api/'));
+  event.waitUntil(
+    caches.open(CACHE).then((cache) => Promise.all(urls.map((url) => cache.add(url).catch(() => undefined)))),
   );
 });
 
