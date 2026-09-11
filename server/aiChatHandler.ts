@@ -68,7 +68,8 @@ export async function handleAIChat(body: unknown, options: AIHandlerOptions = {}
     : provider === 'qwen' ? 'qwen-plus'
       : provider === 'openrouter' ? 'openai/gpt-4o-mini'
         : provider === 'nvidia' ? 'meta/llama-3.2-3b-instruct'
-          : 'gpt-4o-mini';
+          : provider === 'ollama' ? 'qwen2.5:3b-instruct'
+            : 'gpt-4o-mini';
   const testOnly = input.testOnly === true;
   const conversationMessages = testOnly ? [{ role: 'user' as const, content: 'Reply with exactly OK.' }] : cleanMessages(input.messages);
 

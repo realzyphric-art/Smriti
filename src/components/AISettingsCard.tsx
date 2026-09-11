@@ -12,7 +12,7 @@ const DEFAULT_MODELS: Record<AIProvider, string> = {
   qwen: 'qwen-plus',
   openrouter: 'openai/gpt-4o-mini',
   nvidia: 'meta/llama-3.2-3b-instruct',
-  ollama: 'qwen2.5:3b',
+  ollama: 'qwen2.5:3b-instruct',
 };
 
 export function AISettingsCard() {
