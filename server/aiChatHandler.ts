@@ -140,7 +140,11 @@ export async function handleAIChat(body: unknown, options: AIHandlerOptions = {}
             : 'The AI provider rate limit was reached. Please wait a moment and try again.',
         });
       }
-      return response(502, { error: 'The AI service could not answer right now. Please try again.' });
+      return response(502, {
+        error: provider === 'ollama'
+          ? 'Ollama could not be reached. Open Smriti from your laptop address, keep Ollama running, and try again.'
+          : 'The AI service could not answer right now. Please try again.',
+      });
     }
 
     const payload = await upstream.json() as { choices?: Array<{ message?: { content?: unknown } }> };
@@ -149,7 +153,11 @@ export async function handleAIChat(body: unknown, options: AIHandlerOptions = {}
     return response(200, testOnly ? { ok: true } : { content: content.trim() });
   } catch (error) {
     if (error instanceof Error && error.name === 'AbortError') return response(504, { error: 'The AI service took too long to respond. Please try again.' });
-    return response(502, { error: 'The AI service is unavailable. Check your connection and try again.' });
+    return response(502, {
+      error: provider === 'ollama'
+        ? 'Ollama is local to your laptop. Open Smriti at the laptop address instead of the public Vercel link.'
+        : 'The AI service is unavailable. Check your connection and try again.',
+    });
   } finally {
     clearTimeout(timeout);
   }
