@@ -25,13 +25,13 @@ import { ChooseRole } from '@/pages/ChooseRole';
 import { isSupabaseConfigured } from '@/lib/supabase';
 import { AuthPage } from '@/pages/AuthPage';
 import { Chat } from '@/pages/Chat';
+import { GamePlay } from '@/pages/GamePlay';
 import { AI_CHAT_ENABLED } from '@/config/features';
 import { OfflineBanner } from '@/components/OfflineBanner';
 import { ReminderAlarmManager } from '@/components/ReminderAlarmManager';
 
 const ResetPassword = lazy(() => import('@/pages/ResetPassword').then((module) => ({ default: module.ResetPassword })));
 const AdminErrors = lazy(() => import('@/pages/AdminErrors').then((module) => ({ default: module.AdminErrors })));
-const GamePlay = lazy(() => import('@/pages/GamePlay').then((module) => ({ default: module.GamePlay })));
 const CaregiverOverview = lazy(() => import('@/pages/caregiver/CaregiverOverview').then((module) => ({ default: module.CaregiverOverview })));
 const CaregiverProgress = lazy(() => import('@/pages/caregiver/CaregiverProgress').then((module) => ({ default: module.CaregiverProgress })));
 const CaregiverAlerts = lazy(() => import('@/pages/caregiver/CaregiverAlerts').then((module) => ({ default: module.CaregiverAlerts })));

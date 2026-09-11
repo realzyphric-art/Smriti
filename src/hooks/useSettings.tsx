@@ -25,6 +25,7 @@ import { clearGuestData, startGuestMode } from '@/services/guestService';
 import { errorLogger } from '@/services/errorLogger';
 
 const KEY = 'mc:settings';
+const AUTH_RESTORE_TIMEOUT_MS = 5000;
 
 const DEFAULTS: AppSettings = {
   onboarded: false,
@@ -77,6 +78,19 @@ function load(): AppSettings {
   };
 }
 
+/** Lets a cached session open when the network is connected but unreachable. */
+async function withAuthRestoreTimeout<T>(operation: Promise<T>): Promise<T> {
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
+  const timeout = new Promise<never>((_, reject) => {
+    timeoutId = setTimeout(() => reject(new Error('Offline authentication check timed out.')), AUTH_RESTORE_TIMEOUT_MS);
+  });
+  try {
+    return await Promise.race([operation, timeout]);
+  } finally {
+    if (timeoutId) clearTimeout(timeoutId);
+  }
+}
+
 export function SettingsProvider({ children }: { children: ReactNode }) {
   const [settings, setSettings] = useState<AppSettings>(load);
   const [authReady, setAuthReady] = useState(!supabase);
@@ -94,7 +108,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     const syncId = ++authSyncId.current;
     setAuthReady(false);
     try {
-      const context = await currentAuthContext();
+      const context = await withAuthRestoreTimeout(currentAuthContext());
       if (!isLive() || syncId !== authSyncId.current) return false;
       if (!context) {
         setSettings((s) => ({ ...s, authenticated: false }));

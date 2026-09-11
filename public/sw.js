@@ -2,7 +2,7 @@
    Static assets are cached on install and the latest app shell is refreshed
    whenever a page loads online, so installed copies remain usable offline. */
 
-const CACHE = 'memorycare-v5';
+const CACHE = 'memorycare-v6';
 const SHELL = [
   '/',
   '/index.html',
@@ -16,7 +16,10 @@ const SHELL = [
 
 async function cacheAppShell() {
   const cache = await caches.open(CACHE);
-  await cache.addAll(SHELL);
+  // A single unavailable optional asset must not prevent the service worker
+  // from installing. Cache every shell item independently so the app still
+  // starts offline when one image or manifest entry is unavailable.
+  await Promise.all(SHELL.map((path) => cache.add(path).catch(() => undefined)));
   try {
     const manifestResponse = await fetch('/precache-manifest.json', { cache: 'no-store' });
     const manifest = await manifestResponse.json();
