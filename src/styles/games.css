@@ -1,0 +1,272 @@
+/* ============================================================
+   MemoryCare — Game styles
+   ============================================================ */
+
+/* ---------- Shared game frame ---------- */
+.game-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-xs);
+}
+.game-stat {
+  background: var(--surface-container-lowest);
+  border: 1.5px solid var(--border-card);
+  border-radius: var(--radius-md);
+  padding: 0.7rem var(--space-sm);
+  text-align: center;
+}
+.game-stat__value {
+  font-family: var(--font-head);
+  font-weight: 800;
+  font-size: 1.35rem;
+  color: var(--secondary-dark);
+  line-height: 1.1;
+}
+.game-stat__label {
+  font-size: 0.8rem;
+  color: var(--on-surface-variant);
+  font-weight: 700;
+}
+
+/* ---------- Picture Pairs board ---------- */
+.pairs-board {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-sm);
+}
+@media (min-width: 520px) {
+  .pairs-board--wide {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.pair-card {
+  position: relative;
+  aspect-ratio: 1 / 1.05;
+  border-radius: var(--radius-lg);
+  border: 2px solid var(--border-card);
+  background: var(--surface-container-low);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: var(--space-sm);
+  transition: transform 0.15s ease, border-color 0.15s ease,
+    background 0.2s ease;
+  min-height: 6.5rem;
+}
+.pair-card:active {
+  transform: scale(0.97);
+}
+.pair-card__face {
+  font-size: clamp(2.4rem, 12vw, 3.5rem);
+  line-height: 1;
+}
+.pair-card__image {
+  width: clamp(4.2rem, 20vw, 7.5rem);
+  height: clamp(4.2rem, 20vw, 7.5rem);
+  object-fit: cover;
+  border-radius: var(--radius-md);
+}
+.pair-card__q {
+  color: var(--on-surface-muted);
+}
+.pair-card__label {
+  font-size: var(--fs-caption);
+  font-weight: 700;
+  color: var(--on-surface-variant);
+  text-align: center;
+}
+.pair-card--open {
+  background: var(--surface-container-lowest);
+  border-color: var(--primary-container);
+  box-shadow: var(--shadow-sm);
+}
+.pair-card--matched {
+  background: var(--secondary-container);
+  border-color: var(--secondary);
+}
+.pair-card--matched .pair-card__label {
+  color: var(--on-secondary-container);
+}
+.pair-tag {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 0.18rem 0.5rem;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+.pair-tag--matched {
+  background: var(--secondary);
+  color: #fff;
+}
+.pair-tag--open {
+  background: var(--primary-fixed);
+  color: var(--on-primary-fixed);
+}
+
+/* success pop */
+@keyframes pop {
+  0% {
+    transform: scale(0.8);
+  }
+  60% {
+    transform: scale(1.08);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.pop {
+  animation: pop 0.35s ease;
+}
+
+/* ---------- Pattern Recall pad ---------- */
+.pattern-pad {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-md);
+}
+.pattern-pad--six {
+  grid-template-columns: repeat(3, 1fr);
+}
+.pattern-key {
+  aspect-ratio: 1 / 1;
+  border-radius: var(--radius-xl);
+  border: 3px solid var(--border-strong);
+  background: var(--surface-container-lowest);
+  font-family: var(--font-head);
+  font-size: clamp(2.2rem, 12vw, 3rem);
+  font-weight: 800;
+  color: var(--secondary-dark);
+  display: grid;
+  place-items: center;
+  transition: transform 0.1s ease, background 0.15s ease,
+    border-color 0.15s ease, box-shadow 0.15s ease;
+  min-height: 5rem;
+}
+.pattern-key:active {
+  transform: scale(0.96);
+}
+.pattern-key--lit {
+  background: var(--secondary);
+  border-color: var(--secondary);
+  color: #fff;
+  box-shadow: 0 0 0 6px rgba(27, 107, 69, 0.18);
+}
+.pattern-key--correct {
+  background: var(--secondary-container);
+  border-color: var(--secondary);
+  color: var(--on-secondary-container);
+}
+.pattern-key:disabled {
+  cursor: default;
+}
+
+.pattern-progress {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+.pattern-dot {
+  width: 0.85rem;
+  height: 0.85rem;
+  border-radius: 9999px;
+  background: var(--surface-container-highest);
+}
+.pattern-dot--filled {
+  background: var(--secondary);
+}
+
+/* ---------- Daily Routine ---------- */
+.routine-slots {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+.routine-slot {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-lg);
+  border: 2px dashed var(--border-strong);
+  background: var(--surface-container-low);
+  min-height: 4.25rem;
+}
+.routine-slot--filled {
+  border-style: solid;
+  background: var(--surface-container-lowest);
+  border-color: var(--secondary);
+}
+.routine-slot__num {
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 9999px;
+  background: var(--secondary-container);
+  color: var(--on-secondary-container);
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  font-family: var(--font-head);
+  flex-shrink: 0;
+}
+.routine-slot__emoji {
+  font-size: 1.8rem;
+}
+.routine-slot__label {
+  font-weight: 700;
+  font-size: var(--fs-label);
+}
+.routine-slot__hint {
+  color: var(--on-surface-muted);
+  font-size: var(--fs-caption);
+}
+
+.routine-options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-sm);
+}
+.routine-chip {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-lg);
+  border: 2px solid var(--border-card);
+  background: var(--surface-container-lowest);
+  font-weight: 700;
+  font-size: var(--fs-label);
+  min-height: var(--touch-min);
+  text-align: left;
+  transition: transform 0.1s ease, opacity 0.15s ease;
+}
+.routine-chip:active {
+  transform: scale(0.97);
+}
+.routine-chip:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.routine-chip__emoji {
+  font-size: 1.6rem;
+}
+
+/* ---------- Pause overlay ---------- */
+.pause-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  backdrop-filter: blur(6px);
+  display: grid;
+  place-items: center;
+  padding: var(--space-lg);
+}
