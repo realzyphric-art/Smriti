@@ -128,9 +128,10 @@ const en = {
   },
   pairs: {
     title: 'Picture Pairs',
-    instruction: 'Find the matching pictures. No timer, no hurry.',
+    instruction: 'Find the matching pictures. The clock counts your active time, but there is no hurry.',
     pairsFound: 'Pairs Found',
     taps: 'Taps',
+    timeElapsed: 'Time elapsed',
     pause: 'Pause',
     resume: 'Resume',
     paused: 'Paused — take your time.',
@@ -141,7 +142,7 @@ const en = {
     hint: 'Take all the time you need.',
     preview: 'Look carefully — the pictures will turn back over.',
     loading: 'Loading familiar pictures…',
-    familiarHint: 'Find the matching familiar pictures. No timer, no hurry.',
+    familiarHint: 'Find the matching familiar pictures. Take all the time you need.',
   },
   pattern: {
     title: 'Pattern Recall',
@@ -276,6 +277,9 @@ const en = {
     stats: 'Activity summary',
     activeDaysShort: 'active days',
     streakShort: 'day streak',
+    weeklyReport: 'Weekly report',
+    weeklyReportHint: 'Download a detailed PDF with week-over-week comparisons, clinical-style observations, and performance graphs.',
+    downloadWeeklyReport: 'Download weekly PDF',
   },
   settings: {
     title: 'Settings',

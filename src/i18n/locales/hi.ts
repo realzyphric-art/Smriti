@@ -129,9 +129,10 @@ const hi: LocaleDict = {
   },
   pairs: {
     title: 'चित्र जोड़ी',
-    instruction: 'मिलती-जुलती तस्वीरें ढूँढें। कोई घड़ी नहीं, कोई जल्दी नहीं।',
+    instruction: 'मिलती-जुलती तस्वीरें ढूँढें। घड़ी सक्रिय समय गिनती है, लेकिन कोई जल्दी नहीं है।',
     pairsFound: 'मिली जोड़ियाँ',
     taps: 'दबाव',
+    timeElapsed: 'बीता समय',
     pause: 'रुकें',
     resume: 'जारी रखें',
     paused: 'रुका हुआ — अपना समय लें।',
@@ -275,6 +276,9 @@ const hi: LocaleDict = {
     stats: 'गतिविधि सारांश',
     activeDaysShort: 'सक्रिय दिन',
     streakShort: 'दिनों की लय',
+    weeklyReport: 'साप्ताहिक रिपोर्ट',
+    weeklyReportHint: 'साप्ताहिक तुलना, प्रदर्शन ग्राफ़ और विस्तृत अवलोकन वाली PDF डाउनलोड करें।',
+    downloadWeeklyReport: 'साप्ताहिक PDF डाउनलोड करें',
   },
   settings: {
     title: 'सेटिंग्स',

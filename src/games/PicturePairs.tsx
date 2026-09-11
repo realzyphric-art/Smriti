@@ -52,8 +52,8 @@ export function PicturePairs({ level, onComplete }: Props) {
   const [paused, setPaused] = useState(false);
   const [announce, setAnnounce] = useState('');
   const [usingFamiliarPhotos, setUsingFamiliarPhotos] = useState(false);
-  const startRef = useRef(Date.now());
   const lockRef = useRef(false);
+  const [elapsedSec, setElapsedSec] = useState(0);
 
   const matchedPairs = cards.filter((c) => c.matched).length / 2;
 
@@ -122,13 +122,22 @@ export function PicturePairs({ level, onComplete }: Props) {
     return () => window.clearTimeout(id);
   }, [cards.length, cfg.previewMs, enabled, phase, say, t]);
 
+  // Count active play time upward. Pausing also pauses the clock so the
+  // recorded response time reflects time spent solving the activity.
+  useEffect(() => {
+    if (phase === 'preview') setElapsedSec(0);
+    if (phase !== 'play' || paused) return;
+    const id = window.setInterval(() => setElapsedSec((seconds) => seconds + 1), 1000);
+    return () => window.clearInterval(id);
+  }, [paused, phase]);
+
   const finish = useCallback(
     (comps: number) => {
       const score = Math.max(
         0,
         Math.min(100, Math.round((cfg.pairs / Math.max(comps, cfg.pairs)) * 100)),
       );
-      const durationSec = Math.round((Date.now() - startRef.current) / 1000);
+      const durationSec = Math.max(1, elapsedSec);
       setPhase('done');
       setAnnounce(t('pairs.title') + ' — ' + t('result.greatJob'));
       window.setTimeout(
@@ -142,7 +151,7 @@ export function PicturePairs({ level, onComplete }: Props) {
         900,
       );
     },
-    [cfg.pairs, onComplete, t],
+    [cfg.pairs, elapsedSec, onComplete, t],
   );
 
   const handleTap = (card: Card) => {
@@ -204,7 +213,7 @@ export function PicturePairs({ level, onComplete }: Props) {
       <p className="text-muted">{t('pairs.instruction')}</p>
 
       {/* Stats */}
-      <div className="game-stats">
+      <div className="game-stats game-stats--four">
         <div className="game-stat">
           <div className="game-stat__value">
             {matchedPairs} / {cfg.pairs}
@@ -214,6 +223,10 @@ export function PicturePairs({ level, onComplete }: Props) {
         <div className="game-stat">
           <div className="game-stat__value">{taps}</div>
           <div className="game-stat__label">{t('pairs.taps')}</div>
+        </div>
+        <div className="game-stat" role="timer" aria-label={t('pairs.timeElapsed')}>
+          <div className="game-stat__value">{formatElapsed(elapsedSec)}</div>
+          <div className="game-stat__label">{t('pairs.timeElapsed')}</div>
         </div>
         <button
           type="button"
@@ -312,6 +325,11 @@ export function PicturePairs({ level, onComplete }: Props) {
       )}
     </div>
   );
+}
+
+function formatElapsed(seconds: number): string {
+  const minutes = Math.floor(seconds / 60);
+  return `${String(minutes).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
 }
 
 function buildPhotoDeck(photos: FamiliarPhoto[], pairs: number, patientId: string): Card[] {

@@ -8,6 +8,16 @@
   grid-template-columns: repeat(3, 1fr);
   gap: var(--space-xs);
 }
+
+.game-stats--four {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+@media (min-width: 520px) {
+  .game-stats--four {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
 .game-stat {
   background: var(--surface-container-lowest);
   border: 1.5px solid var(--border-card);

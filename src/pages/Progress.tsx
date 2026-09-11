@@ -6,11 +6,16 @@ import { Button } from '@/components/Button';
 import { Icon } from '@/components/Icon';
 import { CardSkeleton } from '@/components/Skeleton';
 import { ContentState } from '@/components/ContentState';
+import { useSettings } from '@/hooks/useSettings';
+import { useReminders } from '@/hooks/useReminders';
+import { downloadCaregiverReport } from '@/services/reportService';
 
 export function Progress() {
   const { t, lang } = useI18n();
   const navigate = useNavigate();
-  const { summary, loading, error, reload } = useProgressData();
+  const { settings } = useSettings();
+  const { summary, sessions, loading, error, reload } = useProgressData();
+  const { reminders } = useReminders();
   const readScreen = `${t('progress.title')}. ${t('progress.subtitle')}`;
 
   if (loading) {
@@ -84,6 +89,21 @@ export function Progress() {
         <section className="progress-note">
           <Icon name="sparkle" size={24} />
           <div><strong>{t('progress.effortTitle')}</strong><p>{t('progress.effortBody')}</p></div>
+        </section>
+
+        <section className="card stack-sm" aria-labelledby="weekly-report-title">
+          <div>
+            <h2 id="weekly-report-title" className="card-title">{t('progress.weeklyReport')}</h2>
+            <p className="text-muted">{t('progress.weeklyReportHint')}</p>
+          </div>
+          <Button
+            block
+            variant="secondary"
+            icon="download"
+            onClick={() => void downloadCaregiverReport({ patientName: settings.patientName || settings.userName || 'Patient', sessions, reminders })}
+          >
+            {t('progress.downloadWeeklyReport')}
+          </Button>
         </section>
 
         {firstStep && <Button size="lg" block icon="play" onClick={() => navigate('/games')}>{t('progress.chooseActivity')}</Button>}
