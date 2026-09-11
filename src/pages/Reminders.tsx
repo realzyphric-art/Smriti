@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { Reminder } from '@/types';
 import { useI18n } from '@/i18n';
 import { useReminders } from '@/hooks/useReminders';
@@ -10,7 +10,7 @@ import { Button } from '@/components/Button';
 import { Sheet } from '@/components/Sheet';
 import { Icon } from '@/components/Icon';
 import { Toggle } from '@/components/Toggle';
-import { formatTime, isCompleteForDate, reminderStatus } from '@/services/reminderService';
+import { formatTime, reminderStatus } from '@/services/reminderService';
 import { localDateKey } from '@/utils/date';
 import { ListSkeleton } from '@/components/Skeleton';
 import { ContentState } from '@/components/ContentState';
@@ -35,7 +35,6 @@ export function Reminders() {
   const [editing, setEditing] = useState<Reminder | null>(null);
   const [deleting, setDeleting] = useState<Reminder | null>(null);
   const [notificationPermission, setNotificationPermission] = useState<NotificationPermission | 'unsupported'>('unsupported');
-  const notified = useRef(new Set<string>());
 
   const todaysReminders = reminders.filter((reminder) => reminder.recurring || !reminder.scheduledDate || reminder.scheduledDate === localDateKey());
   const total = todaysReminders.length;
@@ -66,6 +65,7 @@ export function Reminders() {
     }
     const permission = await Notification.requestPermission();
     setNotificationPermission(permission);
+    window.dispatchEvent(new Event('smriti-notification-permission'));
     showToast(permission === 'granted' ? t('reminders.notificationsEnabled') : t('reminders.notificationsDenied'), permission === 'granted' ? '🔔' : 'ℹ️');
   }, [showToast, t]);
 
@@ -82,35 +82,6 @@ export function Reminders() {
     const timer = window.setTimeout(() => { void requestNotifications(); }, 700);
     return () => window.clearTimeout(timer);
   }, [requestNotifications]);
-
-  // Show a gentle notification while the app is open, including when it is
-  // being used offline. Browser notifications cannot be guaranteed after the
-  // app is fully closed without a push/alarm service.
-  useEffect(() => {
-    if (notificationPermission !== 'granted') return;
-    const notifyDue = () => {
-      const now = new Date();
-      const today = localDateKey(now);
-      reminders.forEach((reminder) => {
-        if (!reminder.enabled || isCompleteForDate(reminder, today)) return;
-        if (!reminder.recurring && reminder.scheduledDate && reminder.scheduledDate !== today) return;
-        if (reminder.repeatDays?.length && !reminder.repeatDays.includes(now.getDay())) return;
-        const [hours, minutes] = reminder.time.split(':').map(Number);
-        if (hours !== now.getHours() || minutes !== now.getMinutes()) return;
-        const key = `${reminder.id}:${today}`;
-        if (notified.current.has(key)) return;
-        notified.current.add(key);
-        new Notification(reminder.title, {
-          body: reminder.detail || t('reminders.title'),
-          icon: '/icon-192.png',
-          tag: `smriti-reminder-${key}`,
-        });
-      });
-    };
-    notifyDue();
-    const timer = window.setInterval(notifyDue, 30_000);
-    return () => window.clearInterval(timer);
-  }, [notificationPermission, reminders, t]);
 
   return (
     <>

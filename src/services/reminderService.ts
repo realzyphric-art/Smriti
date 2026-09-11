@@ -90,7 +90,8 @@ export function defaultReminders(patientId = ''): Reminder[] {
 }
 
 export async function loadReminders(patientId?: string): Promise<Reminder[]> {
-  if (supabase && patientId && !isGuestPatientId(patientId)) {
+  const canReachCloud = typeof navigator === 'undefined' || navigator.onLine;
+  if (supabase && canReachCloud && patientId && !isGuestPatientId(patientId)) {
     try {
       const { data, error } = await supabase.from('reminders').select('*, reminder_completions(completed_on, completed_at)').eq('patient_id', patientId).order('time_local');
       if (error) throw error;

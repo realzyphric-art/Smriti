@@ -27,6 +27,7 @@ import { AuthPage } from '@/pages/AuthPage';
 import { Chat } from '@/pages/Chat';
 import { AI_CHAT_ENABLED } from '@/config/features';
 import { OfflineBanner } from '@/components/OfflineBanner';
+import { ReminderAlarmManager } from '@/components/ReminderAlarmManager';
 
 const ResetPassword = lazy(() => import('@/pages/ResetPassword').then((module) => ({ default: module.ResetPassword })));
 const AdminErrors = lazy(() => import('@/pages/AdminErrors').then((module) => ({ default: module.AdminErrors })));
@@ -145,6 +146,7 @@ export default function App() {
         <ToastProvider>
           <BrowserRouter>
             <OfflineBanner />
+            <ReminderAlarmManager />
             <Suspense fallback={<RouteLoading />}>
               <AppRoutes />
             </Suspense>
