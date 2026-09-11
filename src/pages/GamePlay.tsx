@@ -10,13 +10,12 @@ import { VoiceButton } from '@/components/VoiceButton';
 import { GameResult } from '@/components/GameResult';
 import { PicturePairs } from '@/games/PicturePairs';
 import { PatternRecall } from '@/games/PatternRecall';
-import { DailyRoutine } from '@/games/DailyRoutine';
 import { WhoIsThisPerson } from '@/games/WhoIsThisPerson';
 import { calculateAdaptiveLevel, GAME_DEFINITIONS, recordStandardSession } from '@/services/gameService';
 import { isGuestPatientId } from '@/services/guestService';
 import { supabase } from '@/lib/supabase';
 
-const VALID: GameType[] = ['picture-pairs', 'pattern-recall', 'daily-routine', 'who-is-this-person'];
+const VALID: GameType[] = ['picture-pairs', 'pattern-recall', 'who-is-this-person'];
 
 const TITLE_KEY: Record<GameType, string> = {
   'picture-pairs': 'pairs.title',
@@ -84,8 +83,6 @@ export function GamePlay() {
         return <PicturePairs {...props} />;
       case 'pattern-recall':
         return <PatternRecall {...props} />;
-      case 'daily-routine':
-        return <DailyRoutine {...props} />;
       case 'who-is-this-person':
         return <WhoIsThisPerson {...props} patientId={settings.activePatientId ?? ''} />;
     }

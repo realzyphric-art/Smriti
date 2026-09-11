@@ -27,16 +27,24 @@ export async function requestCaregiverAccess(identifier: string): Promise<void> 
 }
 
 export async function requestCaregiverAccessByCode(code: string): Promise<void> {
-  const { error } = await requireClient().rpc('request_caregiver_access_by_code', {
-    connection_code: code.trim().toUpperCase(),
+  const normalized = code.trim().toUpperCase();
+  if (!/^[A-Z0-9]{8}$/.test(normalized)) throw new Error('Enter the 8-character patient connection code.');
+  const { data, error } = await requireClient().rpc('request_caregiver_access_by_code', {
+    connection_code: normalized,
   });
   if (error) throw error;
+  if (data !== true) throw new Error('No patient was found with that connection code.');
 }
 
-export async function getPatientShareCode(): Promise<string> {
-  const { data, error } = await requireClient().rpc('get_patient_share_code');
+export async function getPatientShareCode(patientId?: string): Promise<string> {
+  const client = requireClient();
+  const { data, error } = patientId
+    ? await client.rpc('get_patient_share_code_for_patient', { p_patient_id: patientId })
+    : await client.rpc('get_patient_share_code');
   if (error) throw error;
-  return String(data ?? '');
+  const code = String(data ?? '').trim().toUpperCase();
+  if (!code) throw new Error('A patient connection code is not available yet.');
+  return code;
 }
 
 export async function listPatientCaregiverLinks(): Promise<CaregiverLink[]> {

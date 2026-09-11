@@ -27,9 +27,7 @@ export function Games() {
         <VoiceButton
           text={`${t('games.picturePairs')}. ${t('games.picturePairsDesc')} ${t(
             'games.patternRecall',
-          )}. ${t('games.patternRecallDesc')} ${t('games.dailyRoutine')}. ${t(
-            'games.dailyRoutineDesc',
-          )}`}
+          )}. ${t('games.patternRecallDesc')}`}
           label={t('games.listenInstructions')}
         />
 
@@ -61,15 +59,6 @@ export function Games() {
           onPlay={() => navigate('/games/pattern-recall')}
           onHear={() => say(`${t('games.patternRecall')}. ${t('games.patternRecallDesc')}`)}
         />
-        <GameCard
-          title={t('games.dailyRoutine')}
-          description={t('games.dailyRoutineDesc')}
-          toneKey="relaxing"
-          minutes="4"
-          onPlay={() => navigate('/games/daily-routine')}
-          onHear={() => say(`${t('games.dailyRoutine')}. ${t('games.dailyRoutineDesc')}`)}
-        />
-
         <div className="activity-note">
           <span className="medallion medallion--amber" aria-hidden="true">
             <Icon name="heart" size={24} />

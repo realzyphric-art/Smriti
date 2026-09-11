@@ -1,5 +1,4 @@
 /**
- * Product switches for features that are kept in the codebase but are not
- * currently part of the patient experience.
+ * Product switches for optional capabilities.
  */
-export const AI_CHAT_ENABLED = false;
+export const AI_CHAT_ENABLED = true;

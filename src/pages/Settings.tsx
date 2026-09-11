@@ -66,7 +66,7 @@ export function Settings() {
     void listPatientCaregiverLinks().then(setCaregiverLinks).catch(() => setSharingMessage('Sharing requests could not be loaded.'));
     if (settings.activePatientId) {
       setShareCodeLoading(true);
-      void getPatientShareCode().then(setShareCode).catch(() => setSharingMessage('Your connection code could not be loaded.')).finally(() => setShareCodeLoading(false));
+      void getPatientShareCode(settings.activePatientId).then(setShareCode).catch((error) => setSharingMessage(sharingErrorMessage(error, 'Your connection code could not be loaded.'))).finally(() => setShareCodeLoading(false));
     }
   }, [settings.role, settings.authenticated, settings.guestMode, settings.activePatientId]);
 
@@ -136,7 +136,20 @@ export function Settings() {
   const copyShareCode = async () => {
     if (!shareCode) return;
     try {
-      await navigator.clipboard.writeText(shareCode);
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(shareCode);
+      } else {
+        const input = document.createElement('textarea');
+        input.value = shareCode;
+        input.setAttribute('readonly', '');
+        input.style.position = 'fixed';
+        input.style.opacity = '0';
+        document.body.appendChild(input);
+        input.select();
+        const copied = document.execCommand('copy');
+        input.remove();
+        if (!copied) throw new Error('Clipboard unavailable');
+      }
       showToast('Connection code copied.', '✓');
     } catch {
       showToast(`Your connection code is ${shareCode}.`, '🔐');

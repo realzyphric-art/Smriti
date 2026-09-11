@@ -64,7 +64,7 @@ h1 { font-weight: 600; }
 .card, .stat-card, .activity-card, .person-row, .reminder-card, .mobile-row { background: var(--surface-container-lowest); border-color: var(--border-card); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); }
 .card { padding: 1.25rem; }
 .card--tint { background: var(--surface-container-low); border-color: transparent; }
-.btn { min-height: 3.75rem; border-radius: 1rem; font-size: var(--fs-label); font-weight: 600; box-shadow: none; }
+.btn { min-height: calc(3.75rem * var(--tap-scale)); border-radius: 1rem; font-size: var(--fs-label); font-weight: 600; box-shadow: none; }
 .btn--primary { background: var(--primary); color: #fff; }
 .btn--primary:hover { background: #244727; }
 .btn--secondary { background: var(--secondary-container); color: var(--on-secondary-container); border-color: transparent; }
@@ -98,14 +98,16 @@ h1 { font-weight: 600; }
 .activity-card { padding: 1.1rem; border: 1px solid var(--border-card); }
 .activity-card h3, .activity-feature h2, .person-row strong, .reminder-card h3 { color: var(--on-surface); font-family: var(--font-head); }
 .activity-card p { color: var(--on-surface-variant); }
-.activity-card > .btn { min-height: 3.5rem; }
+.activity-card > .btn { min-height: calc(3.5rem * var(--tap-scale)); }
 .reminder-card { padding: 1rem; border: 1px solid var(--border-card); }
 .reminder-card.is-now { background: var(--secondary-container-soft); border-color: rgba(212,163,115,.5); }
 .person-row { padding: 1.1rem; border: 1px solid var(--border-card); }
 .person-row__avatar { background: var(--surface-container-low); color: var(--primary); }
 .game-page h1 { font-family: var(--font-head); }
 .game-stat { background: var(--surface-container-lowest); border-color: var(--border-card); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); }
-.pair-card { background: var(--surface-container-low); border-color: rgba(50,87,52,.2); border-radius: var(--radius-xl); min-height: 8rem; }
+.pair-card { background: var(--surface-container-low); border-color: rgba(50,87,52,.2); border-radius: var(--radius-xl); min-height: calc(8rem * var(--tap-scale)); }
+.pattern-key { min-height: calc(5rem * var(--tap-scale)); }
+.nav-item { min-height: calc(4.25rem * var(--tap-scale)); }
 .pair-card--open { background: var(--surface-container-lowest); border-color: var(--primary-container); box-shadow: var(--shadow-md); }
 .pair-card--matched { background: var(--primary-fixed-soft); border-color: var(--primary); }
 .pause-overlay { background: rgba(243,250,255,.9); }
