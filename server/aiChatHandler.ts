@@ -66,7 +66,7 @@ export async function handleAIChat(body: unknown, options: AIHandlerOptions = {}
   const model = typeof input.model === 'string' && input.model.trim().length > 0
     ? input.model.trim().slice(0, 120)
     : provider === 'qwen' ? 'qwen-plus'
-      : provider === 'openrouter' ? 'openai/gpt-4o-mini'
+      : provider === 'openrouter' ? 'openrouter/free'
         : provider === 'nvidia' ? 'meta/llama-3.2-3b-instruct'
           : provider === 'ollama' ? 'qwen2.5:3b-instruct'
             : 'gpt-4o-mini';
@@ -115,6 +115,8 @@ export async function handleAIChat(body: unknown, options: AIHandlerOptions = {}
         return response(403, {
           error: provider === 'nvidia'
             ? 'NVIDIA denied this model for this key. Check the model ID and its access in NVIDIA Build.'
+            : provider === 'openrouter'
+              ? 'OpenRouter denied this model for your key. Try model openrouter/free, or add credits before using a paid model.'
             : 'The provider denied access. Check the key and model in Settings.',
         });
       }

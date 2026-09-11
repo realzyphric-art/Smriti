@@ -10,10 +10,12 @@ import { Icon } from './Icon';
 const DEFAULT_MODELS: Record<AIProvider, string> = {
   openai: 'gpt-4o-mini',
   qwen: 'qwen-plus',
-  openrouter: 'openai/gpt-4o-mini',
+  openrouter: 'openrouter/free',
   nvidia: 'meta/llama-3.2-3b-instruct',
   ollama: 'qwen2.5:3b-instruct',
 };
+
+const LEGACY_OPENROUTER_MODEL = 'openai/gpt-4o-mini';
 
 export function AISettingsCard() {
   const { showToast } = useToast();
@@ -31,8 +33,14 @@ export function AISettingsCard() {
     void storageService.getAISettings().then((settings) => {
       if (!live || !settings) return;
       setProvider(settings.provider);
-      setModel(settings.model);
+      const model = settings.provider === 'openrouter' && settings.model === LEGACY_OPENROUTER_MODEL
+        ? DEFAULT_MODELS.openrouter
+        : settings.model;
+      setModel(model);
       setSavedKey(settings.apiKey);
+      if (model !== settings.model) {
+        void storageService.putAISettings({ ...settings, model, updatedAt: Date.now() });
+      }
     });
     return () => { live = false; };
   }, []);
