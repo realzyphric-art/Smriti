@@ -26,6 +26,7 @@ import { isSupabaseConfigured } from '@/lib/supabase';
 import { AuthPage } from '@/pages/AuthPage';
 import { Chat } from '@/pages/Chat';
 import { AI_CHAT_ENABLED } from '@/config/features';
+import { OfflineBanner } from '@/components/OfflineBanner';
 
 const ResetPassword = lazy(() => import('@/pages/ResetPassword').then((module) => ({ default: module.ResetPassword })));
 const AdminErrors = lazy(() => import('@/pages/AdminErrors').then((module) => ({ default: module.AdminErrors })));
@@ -143,6 +144,7 @@ export default function App() {
       <I18nBridge>
         <ToastProvider>
           <BrowserRouter>
+            <OfflineBanner />
             <Suspense fallback={<RouteLoading />}>
               <AppRoutes />
             </Suspense>

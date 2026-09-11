@@ -34,7 +34,7 @@ export function OfflineBanner() {
   if (online) return null;
 
   return (
-    <div className="banner banner--amber" role="status" aria-live="polite">
+    <div className="banner banner--amber offline-banner--global" role="status" aria-live="polite">
       <Icon name="wifi-off" size={24} />
       <div>
         <strong>{t('offline.youreOffline')}</strong>

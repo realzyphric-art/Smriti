@@ -115,6 +115,17 @@ export async function syncNow(): Promise<SyncResult> {
     try {
       const done = operation.kind.startsWith('reminder-') ? await syncReminderOperation(operation) : await syncPersonOperation(operation);
       if (!done) continue;
+      if (operation.kind === 'reminder-upsert') {
+        const reminder = operation.payload as Reminder;
+        await storageService.putReminder({ ...reminder, syncPending: false });
+      } else if (operation.kind === 'reminder-completion') {
+        const payload = operation.payload as { reminderId: string };
+        const reminder = (await storageService.getReminders()).find((item) => item.id === payload.reminderId);
+        if (reminder) await storageService.putReminder({ ...reminder, syncPending: false });
+      } else if (operation.kind === 'person-upsert') {
+        const person = operation.payload as PersonMemory;
+        await storageService.putPersonMemory({ ...person, syncPending: false });
+      }
       await storageService.deleteSyncOperation(operation.id); synced += 1; changedPatients.add(operation.patientId);
     } catch { /* retain for retry */ }
   }

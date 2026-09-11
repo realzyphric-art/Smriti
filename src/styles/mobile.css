@@ -218,6 +218,15 @@ body, .app-shell { background: var(--mc-parchment); color: var(--mc-ink); }
 .home-intro .btn--audio { margin-top: .25rem; border: 1px solid var(--mc-line); background: transparent; }
 .home-intro .btn--audio:hover { background: var(--mc-quiet); }
 .offline-banner { border-radius: var(--mc-radius-md); }
+.offline-banner--global {
+  position: fixed;
+  top: calc(4.75rem + env(safe-area-inset-top, 0) + .5rem);
+  left: 50%;
+  z-index: 45;
+  width: min(calc(100% - 2rem), 430px);
+  transform: translateX(-50%);
+  box-shadow: 0 8px 24px rgba(15, 70, 53, .12);
+}
 .next-step { color: #fff; background: var(--mc-forest-950); border-radius: var(--mc-radius-lg); box-shadow: var(--mc-shadow-sheet); }
 .next-step__content { gap: .75rem; padding: 1.35rem 1.35rem 1.5rem; }
 .next-step__kicker { display: flex; align-items: center; gap: .45rem; color: #bcd7c8; font-size: .78rem; font-weight: 800; letter-spacing: .02em; }

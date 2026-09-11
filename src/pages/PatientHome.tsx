@@ -6,7 +6,6 @@ import { useProgressData } from '@/hooks/useProgressData';
 import { greetingKey } from '@/utils/helpers';
 import { formatTime } from '@/services/reminderService';
 import { AppHeader } from '@/components/AppHeader';
-import { OfflineBanner } from '@/components/OfflineBanner';
 import { VoiceButton } from '@/components/VoiceButton';
 import { Icon } from '@/components/Icon';
 import { useOnlineStatus } from '@/hooks/useOnlineStatus';
@@ -51,8 +50,6 @@ export function PatientHome() {
           <p>{t('home.intro')}</p>
           <VoiceButton text={planText} label={t('home.hearPlan')} />
         </section>
-
-        <OfflineBanner />
 
         {settings.guestMode && (
           <div className="state-banner state-banner--success" role="status">
