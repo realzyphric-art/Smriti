@@ -56,9 +56,10 @@ export interface RoutineConfig {
 }
 
 export function pairsConfig(level: number): PairsConfig {
-  // 3 -> 6 pairs, gentle preview that shortens slightly with level
+// Start with a calm 10-second look at level 1, then shorten the preview as difficulty rises.
   const pairs = Math.min(6, 2 + level); // L1:3 L2:4 L3:5 L4:6 L5:6
-  const previewMs = Math.max(1200, 3000 - (level - 1) * 400);
+  const previewByLevel = [10000, 8000, 6000, 4500, 3000];
+  const previewMs = previewByLevel[Math.max(0, Math.min(previewByLevel.length - 1, level - 1))];
   return { pairs, previewMs };
 }
 
