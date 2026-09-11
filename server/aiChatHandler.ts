@@ -88,6 +88,7 @@ export async function handleAIChat(body: unknown, options: AIHandlerOptions = {}
       method: 'POST',
       headers: {
         ...(provider === 'ollama' ? {} : { Authorization: `Bearer ${apiKey}` }),
+        Accept: 'application/json',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -95,6 +96,7 @@ export async function handleAIChat(body: unknown, options: AIHandlerOptions = {}
         messages,
         temperature: 0.4,
         max_tokens: testOnly ? 4 : 900,
+        stream: false,
         ...(provider === 'openrouter' ? { reasoning: { effort: 'none' } } : {}),
       }),
       signal: controller.signal,
@@ -116,6 +118,27 @@ export async function handleAIChat(body: unknown, options: AIHandlerOptions = {}
         });
       }
       if (upstream.status === 404) return response(400, { error: 'That model was not found. Check the model name in Settings.' });
+      if (upstream.status === 402) {
+        return response(402, {
+          error: provider === 'nvidia'
+            ? 'NVIDIA requires an active trial or available credits for this request.'
+            : 'The AI provider requires an active account or available credits.',
+        });
+      }
+      if (upstream.status === 422) {
+        return response(400, {
+          error: provider === 'nvidia'
+            ? 'NVIDIA rejected the request. Check the exact model ID and try again.'
+            : 'The provider rejected the request. Check the model and try again.',
+        });
+      }
+      if (upstream.status === 429) {
+        return response(429, {
+          error: provider === 'nvidia'
+            ? 'NVIDIA rate limit reached. Please wait a moment and try again.'
+            : 'The AI provider rate limit was reached. Please wait a moment and try again.',
+        });
+      }
       return response(502, { error: 'The AI service could not answer right now. Please try again.' });
     }
 
