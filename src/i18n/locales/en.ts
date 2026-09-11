@@ -141,8 +141,7 @@ const en = {
     hearHint: 'Hear Hint',
     hint: 'Take all the time you need.',
     preview: 'Look carefully — the pictures will turn back over.',
-    loading: 'Loading familiar pictures…',
-    familiarHint: 'Find the matching familiar pictures. Take all the time you need.',
+    loading: 'Getting your emoji cards ready…',
   },
   pattern: {
     title: 'Pattern Recall',
