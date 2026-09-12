@@ -42,11 +42,26 @@ export function CaregiverPatient() {
 
   useEffect(() => {
     if (!isSupabaseConfigured) { setPatientsLoading(false); return; }
-    setPatientsLoading(true);
-    listAuthorizedPatients()
-      .then(setPatients)
-      .catch((error) => setPatientMessage(error instanceof Error ? error.message : 'Unable to load authorized patients.'))
-      .finally(() => setPatientsLoading(false));
+    let live = true;
+    let firstLoad = true;
+    const refreshPatients = () => {
+      if (firstLoad) setPatientsLoading(true);
+      firstLoad = false;
+      void listAuthorizedPatients()
+        .then((nextPatients) => { if (live) setPatients(nextPatients); })
+        .catch((error) => { if (live) setPatientMessage(error instanceof Error ? error.message : 'Unable to load authorized patients.'); })
+        .finally(() => { if (live) setPatientsLoading(false); });
+    };
+    refreshPatients();
+    const interval = window.setInterval(refreshPatients, 15_000);
+    window.addEventListener('focus', refreshPatients);
+    window.addEventListener('online', refreshPatients);
+    return () => {
+      live = false;
+      window.clearInterval(interval);
+      window.removeEventListener('focus', refreshPatients);
+      window.removeEventListener('online', refreshPatients);
+    };
   }, []);
 
   useEffect(() => {

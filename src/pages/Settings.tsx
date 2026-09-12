@@ -64,7 +64,26 @@ export function Settings() {
 
   useEffect(() => {
     if (settings.role !== 'patient' || !settings.authenticated || settings.guestMode) return;
-    void listPatientCaregiverLinks().then(setCaregiverLinks).catch(() => setSharingMessage('Sharing requests could not be loaded.'));
+    let live = true;
+    const refreshCaregiverLinks = () => {
+      void listPatientCaregiverLinks()
+        .then((links) => { if (live) setCaregiverLinks(links); })
+        .catch(() => { if (live) setSharingMessage('Sharing requests could not be loaded.'); });
+    };
+    refreshCaregiverLinks();
+    const interval = window.setInterval(refreshCaregiverLinks, 15_000);
+    window.addEventListener('focus', refreshCaregiverLinks);
+    window.addEventListener('online', refreshCaregiverLinks);
+    return () => {
+      live = false;
+      window.clearInterval(interval);
+      window.removeEventListener('focus', refreshCaregiverLinks);
+      window.removeEventListener('online', refreshCaregiverLinks);
+    };
+  }, [settings.role, settings.authenticated, settings.guestMode]);
+
+  useEffect(() => {
+    if (settings.role !== 'patient' || !settings.authenticated || settings.guestMode) return;
     if (settings.activePatientId) {
       setShareCodeLoading(true);
       void getPatientShareCode(settings.activePatientId).then(setShareCode).catch((error) => setSharingMessage(sharingErrorMessage(error, 'Your connection code could not be loaded.'))).finally(() => setShareCodeLoading(false));
