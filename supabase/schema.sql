@@ -298,7 +298,9 @@ as $$
     exists (select 1 from public.patients p where p.id = target_patient and p.auth_user_id = auth.uid())
     or exists (
       select 1 from public.caregiver_patient cp
+      join public.patients p on p.id = cp.patient_id
       where cp.patient_id = target_patient and cp.caregiver_id = auth.uid() and cp.status = 'active'
+        and p.share_with_caregiver = true
     )
   );
 $$;

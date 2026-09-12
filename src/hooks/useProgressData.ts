@@ -7,6 +7,20 @@ import { useSettings } from './useSettings';
 import { supabase } from '@/lib/supabase';
 import { isGuestPatientId } from '@/services/guestService';
 
+const ACTIVITY_REQUEST_TIMEOUT_MS = 12_000;
+
+async function withActivityTimeout<T>(operation: PromiseLike<T>): Promise<T> {
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
+  const timeout = new Promise<never>((_, reject) => {
+    timeoutId = setTimeout(() => reject(new Error('Activity data took too long to load. Check the connection and try again.')), ACTIVITY_REQUEST_TIMEOUT_MS);
+  });
+  try {
+    return await Promise.race([operation, timeout]);
+  } finally {
+    if (timeoutId) clearTimeout(timeoutId);
+  }
+}
+
 function todayKey() {
   return localDateKey();
 }
@@ -23,7 +37,7 @@ export function useProgressData() {
     let list: GameSession[];
     if (supabase && settings.activePatientId && !isGuestPatientId(settings.activePatientId)) {
       try {
-        const { data, error } = await supabase.from('game_sessions').select('id, patient_id, game_type, level, score, accuracy, attempts, completed, duration_seconds, played_at').eq('patient_id', settings.activePatientId).order('played_at', { ascending: false });
+        const { data, error } = await withActivityTimeout(supabase.from('game_sessions').select('id, patient_id, game_type, level, score, accuracy, attempts, completed, duration_seconds, played_at').eq('patient_id', settings.activePatientId).order('played_at', { ascending: false }));
         if (error) throw error;
         const remote = (data ?? []).map((s) => ({ id: s.id, patientId: s.patient_id, gameType: s.game_type as GameSession['gameType'], level: s.level, score: s.score, accuracy: s.accuracy, attempts: s.attempts, completed: s.completed, durationSec: s.duration_seconds, timestamp: new Date(s.played_at).getTime(), synced: true }));
         const localPending = (await storageService.getSessions()).filter((s) => s.patientId === settings.activePatientId && !s.synced);

@@ -1,6 +1,20 @@
 import { supabase } from '@/lib/supabase';
 import type { PatientRecord } from '@/types';
 
+const PATIENT_REQUEST_TIMEOUT_MS = 12_000;
+
+async function withPatientTimeout<T>(operation: PromiseLike<T>, message: string): Promise<T> {
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
+  const timeout = new Promise<never>((_, reject) => {
+    timeoutId = setTimeout(() => reject(new Error(message)), PATIENT_REQUEST_TIMEOUT_MS);
+  });
+  try {
+    return await Promise.race([operation, timeout]);
+  } finally {
+    if (timeoutId) clearTimeout(timeoutId);
+  }
+}
+
 export type NewPatient = Pick<PatientRecord, 'name'> & Pick<PatientRecord, 'date_of_birth' | 'notes' | 'interests' | 'share_with_caregiver'>;
 
 export async function createPatient(patient: NewPatient) {
@@ -94,7 +108,10 @@ export async function listAuthorizedPatients() {
   if (!supabase) return [] as PatientRecord[];
   // Never include the private patient-to-caregiver connection code in the
   // caregiver's normal patient list response.
-  const { data, error } = await supabase.from('patients').select('id, auth_user_id, name, profile_photo_path, date_of_birth, notes, interests, share_with_caregiver, updated_at').order('name');
+  const { data, error } = await withPatientTimeout(
+    supabase.from('patients').select('id, auth_user_id, name, profile_photo_path, date_of_birth, notes, interests, share_with_caregiver, updated_at').order('name'),
+    'Authorized patients took too long to load. Check the connection and try again.',
+  );
   if (error) throw error;
   return (data ?? []) as PatientRecord[];
 }
