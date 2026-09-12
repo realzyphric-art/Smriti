@@ -17,6 +17,7 @@ const GAME_LABEL: Record<string, string> = {
   'picture-pairs': 'games.picturePairs',
   'pattern-recall': 'games.patternRecall',
   'daily-routine': 'games.dailyRoutine',
+  'who-is-this-person': 'games.familiarFaces',
 };
 
 function timeAgo(ts: number): string {
@@ -166,7 +167,7 @@ export function CaregiverPatient() {
                 {recentSessions.map((s) => (
                   <div className="metric-row" key={s.id}>
                     <div>
-                      <strong>{t(GAME_LABEL[s.gameType])}</strong>
+                      <strong>{t(GAME_LABEL[s.gameType] ?? 'games.title')}</strong>
                       <div className="muted">
                         {t('home.level')} {s.level} · {timeAgo(s.timestamp)}
                       </div>
