@@ -50,7 +50,20 @@ export function CaregiverPatient() {
 
   useEffect(() => {
     if (!isSupabaseConfigured) return;
-    void listMyCaregiverLinks().then(setCaregiverLinks).catch(() => undefined);
+    let live = true;
+    const refreshLinks = () => {
+      void listMyCaregiverLinks().then((links) => { if (live) setCaregiverLinks(links); }).catch(() => undefined);
+    };
+    refreshLinks();
+    const interval = window.setInterval(refreshLinks, 15_000);
+    window.addEventListener('focus', refreshLinks);
+    window.addEventListener('online', refreshLinks);
+    return () => {
+      live = false;
+      window.clearInterval(interval);
+      window.removeEventListener('focus', refreshLinks);
+      window.removeEventListener('online', refreshLinks);
+    };
   }, []);
 
   const sendInvite = async () => {

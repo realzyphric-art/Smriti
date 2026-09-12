@@ -50,6 +50,20 @@ export function useProgressData() {
     reload();
   }, [reload]);
 
+  // Caregiver screens stay current after the patient completes a game in
+  // another tab or device, without requiring a manual page reload.
+  useEffect(() => {
+    const refresh = () => { void reload(); };
+    const interval = window.setInterval(refresh, 30_000);
+    window.addEventListener('focus', refresh);
+    window.addEventListener('online', refresh);
+    return () => {
+      window.clearInterval(interval);
+      window.removeEventListener('focus', refresh);
+      window.removeEventListener('online', refresh);
+    };
+  }, [reload]);
+
   const todayGames = sessions.filter(
     (s) => s.completed && localDateKey(new Date(s.timestamp)) === todayKey(),
   ).length;
